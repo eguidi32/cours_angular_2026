@@ -1,0 +1,130 @@
+<div class="container-fluid p-4">
+  <!-- Header -->
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="mb-0"><i class="bi bi-list"></i>{{title}}</h2>
+    <a class="btn btn-primary" routerLink="/private/create-demande">
+      <i class="bi bi-plus-circle"></i> Nouvelle Demande
+    </a>
+  </div>
+
+  <!-- Filters -->
+  <div class="card shadow-sm mb-4 border-start border-0 border-primary">
+    <div class="card-body">
+      <div class="row">
+        <div class="col-md-4 mb-3">
+          <label class="form-label text-muted">Filtrer par statut</label>
+          <select
+            [(ngModel)]="filtreStatut"
+            (change)="appliquerFiltres()"
+            class="form-select"
+          >
+            <option value="">Tous les statuts</option>
+            <option>En attente</option>
+            <option>Acceptée</option>
+            <option>Refusée</option>
+          </select>
+        </div>
+        <div class="col-md-4 mb-3">
+          <label class="form-label text-muted">Filtrer par spécialité</label>
+          <select
+            [(ngModel)]="filtreSpecialite"
+            (change)="appliquerFiltres()"
+            class="form-select"
+          >
+            <option value="">Toutes les spécialités</option>
+            <option>Cardiologue</option>
+            <option>Dermatologue</option>
+            <option>Médecin Généraliste</option>
+            <option>Oculiste</option>
+          </select>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Table -->
+  <div class="card shadow-sm border-start border-0 border-primary">
+    <div class="card-body p-0">
+      @if (demandesPaginees.length > 0) {
+        <div class="table-responsive">
+          <table class="table table-hover mb-0">
+            <thead class="table-light">
+              <tr>
+                <th>Spécialité</th>
+                <th><i class="bi bi-calendar"></i> Date Demandée</th>
+                <th><i class="bi bi-clock"></i> Heure</th>
+                <th><i class="bi bi-info-circle"></i> Statut</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (demande of demandesPaginees; track demande.id) {
+                <tr>
+                  <td class="align-middle">{{ demande.specialite }}</td>
+                  <td class="align-middle">{{ demande.dateDemande }}</td>
+                  <td class="align-middle">{{ demande.heure }}</td>
+                  <td class="align-middle">
+                    @if (demande.statut === "En attente") {
+                      <span class="badge bg-warning text-dark">
+                        <i class="bi bi-clock"></i> {{ demande.statut }}
+                      </span>
+                    } @else if (demande.statut === "Acceptée") {
+                      <span class="badge bg-success text-white">
+                        <i class="bi bi-check-circle"></i> {{ demande.statut }}
+                      </span>
+                    } @else if (demande.statut === "Refusée") {
+                      <span class="badge bg-danger text-white">
+                        <i class="bi bi-x-circle"></i> {{ demande.statut }}
+                      </span>
+                    }
+                  </td>
+                  <td class="align-middle">
+                    <button class="btn btn-sm btn-outline-primary me-1">
+                      <i class="bi bi-eye"></i> Voir
+                    </button>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+        <!-- Pagination -->
+        <nav class="mt-4">
+          <ul class="pagination justify-content-center">
+            <li class="page-item">
+              <a
+                class="page-link"
+                (click)="changerPage(currentPage - 1)"
+                [class.disabled]="currentPage === 1"
+                >Précédent</a
+              >
+            </li>
+            @for (page of pages; track page) {
+              <li
+                class="page-item"
+                [class.active]="page === currentPage"
+              >
+                <a class="page-link" (click)="changerPage(page)">{{ page }}</a>
+              </li>
+            }
+            <li class="page-item">
+              <a
+                class="page-link"
+                (click)="changerPage(currentPage + 1)"
+                [class.disabled]="currentPage === totalPages"
+                >Suivant</a
+              >
+            </li>
+          </ul>
+        </nav>
+      } @else {
+        <div class="p-4 text-center text-muted">
+          <i class="bi bi-inbox fs-1"></i>
+          <p class="mb-0 mt-2">Aucune demande de rendez-vous trouvée.</p>
+        </div>
+      }
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
